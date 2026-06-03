@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>SmartBook – Libros</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Gestión de libros - SmartBook">
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Colores personalizados -->
+  <script src="js/tailwind.config.js"></script>
+
+  <style>
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .card-shadow {
+      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.1);
+      animation: fadeInUp 0.6s ease-out;
+    }
+    
+    .logo-animate {
+      animation: fadeIn 0.8s ease-out;
+    }
+
+    .stat-card {
+      transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.15);
+    }
+
+    .sidebar-link {
+      transition: all 0.2s ease;
+    }
+
+    .sidebar-link:hover {
+      transform: translateX(5px);
+    }
+
+    .modal-animate {
+      animation: slideDown 0.3s ease-out;
+    }
+
+    .skeleton {
+      background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+      background-size: 200% 100%;
+      animation: loading 1.5s infinite;
+    }
+
+    @keyframes loading {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+  </style>
+</head>
+
+<body class="bg-gray-50 min-h-screen">
+
+  <!-- 🔥 AUTH UNIVERSAL -->
+  <script src="js/auth.js"></script>
+
+  <div class="flex">
+
+    <!-- ====================== -->
+    <!-- SIDEBAR COMPLETA -->
+    <!-- ====================== -->
+    <aside class="w-64 bg-white h-screen shadow-lg fixed top-0 left-0 flex flex-col z-30">
+      <!-- Logo -->
+      <div class="p-6 flex flex-col items-center border-b">
+        <img src="images/logocecar.png" alt="SmartBook Logo" class="h-12 w-auto mb-4 logo-animate">
+        <h1 class="text-xl font-bold text-gray-700">SmartBook</h1>
+      </div>
+
+      <!-- Menú -->
+      <nav class="flex-1 p-4 space-y-2 text-gray-700" aria-label="Navegación principal">
+
+        <a href="dashboard.html" class="sidebar-link block px-4 py-3 rounded-lg hover:bg-primary/10">
+          <span class="flex items-center gap-3">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="7" height="7"></rect>
+              <rect x="14" y="3" width="7" height="7"></rect>
+              <rect x="14" y="14" width="7" height="7"></rect>
+              <rect x="3" y="14" width="7" height="7"></rect>
+            </svg>
+            Dashboard
+          </span>
+        </a>
+
+        <a href="clientes.html" class="sidebar-link block px-4 py-3 rounded-lg hover:bg-primary/10">
+          <span class="flex items-center gap-3">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            Clientes
+          </span>
+        </a>
+
+        <a href="libros.html" class="sidebar-link block px-4 py-3 rounded-lg bg-primary text-white font-medium">
+          <span class="flex items-center gap-3">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+            </svg>
+            Libros
+          </span>
+        </a>
+
+        <a href="inventario.html" class="sidebar-link block px-4 py-3 rounded-lg hover:bg-primary/10">
+          <span class="flex items-center gap-3">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5 12 2"></polygon>
+              <line x1="12" y1="22" x2="12" y2="15.5"></line>
+              <polyline points="22 8.5 12 15.5 2 8.5"></polyline>
+              <polyline points="2 15.5 12 8.5 22 15.5"></polyline>
+              <line x1="12" y1="2" x2="12" y2="8.5"></line>
+            </svg>
+            Inventario
+          </span>
+        </a>
+
+        <a href="ventas.html" class="sidebar-link block px-4 py-3 rounded-lg hover:bg-primary/10">
+          <span class="flex items-center gap-3">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <path d="M16 10a4 4 0 0 1-8 0"></path>
+            </svg>
+            Ventas
+          </span>
+        </a>
+
+        <!-- 🔥 SOLO ADMIN -->
+        <a id="adminUsersItem" href="usuarios.html"
+           class="sidebar-link hidden block px-4 py-3 rounded-lg hover:bg-primary/10 text-red-700 font-semibold">
+          <span class="flex items-center gap-3">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+            Usuarios
+          </span>
+        </a>
+
+      </nav>
+
+      <!-- Logout -->
+      <div class="p-4 border-t">
+        <button onclick="logout()" class="w-full py-3 bg-primary text-white rounded-lg hover:bg-red-700 flex items-center justify-center gap-2 transition-colors" aria-label="Cerrar sesión">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16,17 21,12 16,7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+          </svg>
+          Cerrar sesión
+        </button>
+      </div>
+    </aside>
+
+    <!-- ====================== -->
+    <!-- Contenido principal -->
+    <!-- ====================== -->
+    <main class="ml-64 p-8 w-full">
+
+      <!-- Header -->
+      <header class="flex justify-between items-center mb-8">
+        <div>
+          <h2 class="text-3xl font-bold text-gray-700">Gestión de Libros</h2>
+          <p class="text-gray-500 text-sm">Administra el catálogo de libros y sus existencias</p>
+        </div>
+
+        <div class="text-right">
+          <p class="font-semibold text-gray-700" id="userName">Usuario</p>
+          <p class="text-gray-500 text-sm" id="userEmail">Email</p>
+        </div>
+      </header>
+
+      <!-- ====================== -->
+      <!-- Estadísticas rápidas -->
+      <!-- ====================== -->
+      <section class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="stat-card bg-white card-shadow rounded-xl p-6 border-t-4 border-primary">
+          <div class="flex items-center justify-between">
+            <div>
+              <h3 class="font-semibold text-gray-600">Total Libros</h3>
+              <p id="totalLibros" class="text-3xl font-bold mt-2 text-gray-800">--</p>
+            </div>
+            <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="stat-card bg-white card-shadow rounded-xl p-6 border-t-4 border-secondary">
+          <div class="flex items-center justify-between">
+            <div>
+              <h3 class="font-semibold text-gray-600">Bajo Stock</h3>
+              <p id="bajoStock" class="text-3xl font-bold mt-2 text-gray-800">--</p>
+            </div>
+            <div class="w-12 h-12 rounded-full bg-secondary/10 flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                <line x1="12" y1="9" x2="12" y2="13"></line>
+                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="stat-card bg-white card-shadow rounded-xl p-6 border-t-4 border-primary">
+          <div class="flex items-center justify-between">
+            <div>
+              <h3 class="font-semibold text-gray-600">Stock Total</h3>
+              <p id="stockTotal" class="text-3xl font-bold mt-2 text-gray-800">--</p>
+            </div>
+            <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 6H9l-7 7 7 7h11a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2z"></path>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ====================== -->
+      <!-- Barra de acciones -->
+      <!-- ====================== -->
+      <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+        <div class="relative w-full sm:w-auto sm:flex-1">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+          </div>
+          <input id="searchInput" type="search"
+                 class="pl-10 pr-4 py-3 w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/30 focus:border-primary outline-none transition"
+                 placeholder="Buscar por nombre, nivel o editorial..."
+                 aria-label="Buscar libros">
+        </div>
+
+        <button id="openModalBtn"
+                class="px-5 py-3 bg-primary text-white rounded-lg shadow hover:bg-red-700 flex items-center gap-2 transition-colors whitespace-nowrap">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          Nuevo Libro
+        </button>
+      </div>
+
+      <!-- ====================== -->
+      <!-- Tabla de libros -->
+      <!-- ====================== -->
+      <div class="bg-white card-shadow rounded-xl overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left" aria-label="Lista de libros">
+            <thead class="bg-secondary text-white">
+              <tr>
+                <th class="p-4 font-semibold">Nombre</th>
+                <th class="p-4 font-semibold">Nivel</th>
+                <th class="p-4 font-semibold">Tipo</th>
+                <th class="p-4 font-semibold">Editorial</th>
+                <th class="p-4 font-semibold">Edición</th>
+                <th class="p-4 font-semibold">Stock</th>
+                <th class="p-4 font-semibold">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="librosTable" class="divide-y">
+              <!-- Skeleton loading -->
+              <tr>
+                <td colspan="7" class="p-8">
+                  <div class="space-y-3">
+                    <div class="skeleton h-4 rounded"></div>
+                    <div class="skeleton h-4 rounded"></div>
+                    <div class="skeleton h-4 rounded w-3/4"></div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        
+        <!-- Estado vacío -->
+        <div id="emptyState" class="hidden p-8 text-center">
+          <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+          </svg>
+          <h3 class="mt-2 text-sm font-medium text-gray-900">No hay libros</h3>
+          <p class="mt-1 text-sm text-gray-500">Comienza agregando tu primer libro.</p>
+          <div class="mt-6">
+            <button id="emptyStateBtn" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary hover:bg-red-700">
+              <svg class="-ml-1 mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+              </svg>
+              Nuevo Libro
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- ====================== -->
+  <!-- MODAL CREAR/EDITAR LIBRO -->
+  <!-- ====================== -->
+  <div id="modal" class="hidden fixed inset-0 bg-black/40 flex justify-center items-center p-4 z-50" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="bg-white w-full max-w-2xl rounded-xl shadow-xl modal-animate">
+      <div class="bg-primary text-white p-6 rounded-t-xl">
+        <h3 id="modalTitle" class="text-xl font-bold">Registrar Libro</h3>
+        <p class="text-primary-100 text-sm mt-1">Completa la información del libro y sus existencias iniciales</p>
+      </div>
+
+      <form id="libroForm" class="p-6 space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="space-y-2">
+            <label for="nombre" class="block text-sm font-medium text-gray-700">Nombre del libro *</label>
+            <input id="nombre" type="text" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/30 focus:border-primary outline-none transition" required>
+          </div>
+
+          <div class="space-y-2">
+            <label for="nivel" class="block text-sm font-medium text-gray-700">Nivel *</label>
+            <input id="nivel" type="text" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/30 focus:border-primary outline-none transition" required>
+          </div>
+
+          <div class="space-y-2">
+            <label for="tipo" class="block text-sm font-medium text-gray-700">Tipo *</label>
+            <select id="tipo" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/30 focus:border-primary outline-none transition" required>
+              <option value="">Seleccione tipo...</option>
+              <option value="1">Físico</option>
+              <option value="2">Digital</option>
+            </select>
+          </div>
+
+          <div class="space-y-2">
+            <label for="editorial" class="block text-sm font-medium text-gray-700">Editorial *</label>
+            <input id="editorial" type="text" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/30 focus:border-primary outline-none transition" required>
+          </div>
+
+          <div class="space-y-2">
+            <label for="edicion" class="block text-sm font-medium text-gray-700">Edición *</label>
+            <input id="edicion" type="text" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/30 focus:border-primary outline-none transition" required>
+          </div>
+        </div>
+
+        <!-- Sección de ingresos -->
+        <div class="border-t pt-6 mt-6">
+          <h4 class="text-lg font-semibold text-gray-800 mb-4">Información de ingresos (opcional)</h4>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="space-y-2">
+              <label for="unidades" class="block text-sm font-medium text-gray-700">Unidades a ingresar</label>
+              <input id="unidades" type="number" min="0" step="1"
+                     class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/30 focus:border-primary outline-none transition"
+                     placeholder="Ej: 10">
+            </div>
+
+            <div class="space-y-2">
+              <label for="valorCompra" class="block text-sm font-medium text-gray-700">Valor de compra</label>
+              <div class="relative">
+                <span class="absolute left-3 top-3 text-gray-500">$</span>
+                <input id="valorCompra" type="number" min="0" step="0.01"
+                       class="w-full pl-8 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/30 focus:border-primary outline-none transition"
+                       placeholder="0.00">
+              </div>
+            </div>
+
+            <div class="space-y-2">
+              <label for="valorVentaPublico" class="block text-sm font-medium text-gray-700">Valor venta público</label>
+              <div class="relative">
+                <span class="absolute left-3 top-3 text-gray-500">$</span>
+                <input id="valorVentaPublico" type="number" min="0" step="0.01"
+                       class="w-full pl-8 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/30 focus:border-primary outline-none transition"
+                       placeholder="0.00">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex justify-end gap-3 pt-6 border-t">
+          <button type="button" id="closeModalBtn"
+                  class="px-5 py-2.5 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors">
+            Cancelar
+          </button>
+          <button type="submit" id="submitBtn"
+                  class="px-5 py-2.5 bg-primary text-white rounded-lg hover:bg-red-700 transition-colors flex items-center gap-2">
+            <svg id="submitSpinner" class="hidden animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <span id="submitText">Guardar Libro</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ============================== -->
+  <!-- Script de gestión de libros -->
+  <!-- ============================== -->
+  <script>
+    // APIs
+    const API_URL = "https://smartbook.runasp.net/api/Libros";
+    const API_INGRESOS = "https://smartbook.runasp.net/api/Ingresos";
+    
+    // Configurar usuario
+    document.getElementById("userName").textContent = authData.usuario?.nombres ?? "Usuario";
+    document.getElementById("userEmail").textContent = authData.usuario?.email ?? "";
+    
+    // Activar Menú Admin
+    if (authData.usuario?.rol === "Admin") {
+      document.getElementById("adminUsersItem").classList.remove("hidden");
+    }
+
+    // ELEMENTOS
+    const librosTable = document.getElementById("librosTable");
+    const searchInput = document.getElementById("searchInput");
+    const emptyState = document.getElementById("emptyState");
+    const modal = document.getElementById("modal");
+    const modalTitle = document.getElementById("modalTitle");
+    const openModalBtn = document.getElementById("openModalBtn");
+    const emptyStateBtn = document.getElementById("emptyStateBtn");
+    const closeModalBtn = document.getElementById("closeModalBtn");
+    const libroForm = document.getElementById("libroForm");
+    const submitBtn = document.getElementById("submitBtn");
+    const submitText = document.getElementById("submitText");
+    const submitSpinner = document.getElementById("submitSpinner");
+
+    // Form fields
+    const nombre = document.getElementById("nombre");
+    const nivel = document.getElementById("nivel");
+    const tipo = document.getElementById("tipo");
+    const editorial = document.getElementById("editorial");
+    const edicion = document.getElementById("edicion");
+    const unidades = document.getElementById("unidades");
+    const valorCompra = document.getElementById("valorCompra");
+    const valorVentaPublico = document.getElementById("valorVentaPublico");
+
+    let editId = null;
+    let allLibros = [];
+    let allStock = {};
+
+    // -----------------------
+    // FUNCIONES UTILITARIAS
+    // -----------------------
+    function showLoading(show) {
+      if (show) {
+        submitSpinner.classList.remove("hidden");
+        submitText.textContent = "Guardando...";
+        submitBtn.disabled = true;
+      } else {
+        submitSpinner.classList.add("hidden");
+        submitText.textContent = "Guardar Libro";
+        submitBtn.disabled = false;
+      }
+    }
+
+    function showError(message) {
+      alert(message); // En producción, usar toast notifications
+    }
+
+    function showSuccess(message) {
+      alert(message); // En producción, usar toast notifications
+    }
+
+    // -----------------------
+    // ABRIR/CERRAR MODAL
+    // -----------------------
+    openModalBtn.onclick = openModal;
+    emptyStateBtn.onclick = openModal;
+    
+    function openModal() {
+      editId = null;
+      modalTitle.textContent = "Registrar Libro";
+      libroForm.reset();
+      unidades.value = "";
+      valorCompra.value = "";
+      valorVentaPublico.value = "";
+      modal.classList.remove("hidden");
+      nombre.focus();
+    }
+
+    closeModalBtn.onclick = closeModal;
+    
+    function closeModal() {
+      modal.classList.add("hidden");
+      showLoading(false);
+    }
+
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) closeModal();
+    });
+
+    // -----------------------
+    // CARGAR LIBROS Y ESTADÍSTICAS
+    // -----------------------
+    async function cargarLibros() {
+      try {
+        const [libRes, stockRes] = await Promise.all([
+          fetch(API_URL, { headers: authHeaders() }),
+          fetch(API_URL + "/stock", { headers: authHeaders() })
+        ]);
+
+        if (!libRes.ok || !stockRes.ok) {
+          throw new Error('Error en la respuesta del servidor');
+        }
+
+        allLibros = await libRes.json();
+        const stockList = await stockRes.json();
+
+        // Crear diccionario de stock
+        allStock = {};
+        stockList.forEach(s => {
+          allStock[s.libro.toLowerCase()] = s.stockTotal;
+        });
+
+        // Actualizar estadísticas
+        updateStats(allLibros, stockList);
+        
+        // Mostrar libros
+        mostrarLibros(allLibros, allStock);
+        updateEmptyState(allLibros.length === 0);
+
+      } catch (error) {
+        console.error("Error cargando libros:", error);
+        librosTable.innerHTML = `
+          <tr>
+            <td colspan="7" class="p-8 text-center">
+              <div class="text-red-500">
+                <svg class="mx-auto h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <p class="mt-2 font-medium">Error cargando libros</p>
+                <p class="text-sm mt-1">Intenta recargar la página</p>
+              </div>
+            </td>
+          </tr>
+        `;
+        updateEmptyState(true);
+      }
+    }
+
+    // -----------------------
+    // ACTUALIZAR ESTADÍSTICAS
+    // -----------------------
+    function updateStats(libros, stockList) {
+      // Total libros
+      document.getElementById("totalLibros").textContent = libros.length;
+      
+      // Stock total
+      const totalStock = stockList.reduce((sum, s) => sum + s.stockTotal, 0);
+      document.getElementById("stockTotal").textContent = totalStock.toLocaleString();
+      
+      // Bajo stock (menos de 10 unidades)
+      const bajoStock = stockList.filter(s => s.stockTotal < 10).length;
+      document.getElementById("bajoStock").textContent = bajoStock;
+    }
+
+    // -----------------------
+    // MOSTRAR LIBROS EN TABLA
+    // -----------------------
+    function mostrarLibros(libros, stockDict) {
+      librosTable.innerHTML = "";
+
+      if (libros.length === 0) {
+        updateEmptyState(true);
+        return;
+      }
+
+      libros.forEach(l => {
+        const stock = stockDict[l.nombre.toLowerCase()] ?? 0;
+        
+        // Determinar clase de stock
+        let stockClass, stockText;
+        if (stock === 0) {
+          stockClass = "bg-red-100 text-red-800";
+          stockText = "Agotado";
+        } else if (stock < 10) {
+          stockClass = "bg-yellow-100 text-yellow-800";
+          stockText = `${stock} unidades`;
+        } else {
+          stockClass = "bg-green-100 text-green-800";
+          stockText = `${stock} unidades`;
+        }
+
+        const tr = document.createElement("tr");
+        tr.className = "hover:bg-gray-50 transition-colors";
+        tr.innerHTML = `
+          <td class="p-4 font-medium text-gray-900">${l.nombre}</td>
+          <td class="p-4 text-gray-700">${l.nivel}</td>
+          <td class="p-4">
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${l.tipo === 1 ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800'}">
+              ${l.tipo === 1 ? "Físico" : "Digital"}
+            </span>
+          </td>
+          <td class="p-4 text-gray-700">${l.editorial}</td>
+          <td class="p-4 text-gray-700">${l.edicion}</td>
+          <td class="p-4">
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${stockClass}">
+              ${stockText}
+            </span>
+          </td>
+          <td class="p-4">
+            <div class="flex items-center gap-2">
+              <button onclick="editarLibro(${l.id})" 
+                      class="text-primary hover:text-red-700 transition-colors p-2 rounded-lg hover:bg-primary/10"
+                      aria-label="Editar libro">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                </svg>
+              </button>
+            </div>
+          </td>
+        `;
+        librosTable.appendChild(tr);
+      });
+    }
+
+    // -----------------------
+    // ACTUALIZAR ESTADO VACÍO
+    // -----------------------
+    function updateEmptyState(isEmpty) {
+      if (isEmpty) {
+        librosTable.innerHTML = "";
+        emptyState.classList.remove("hidden");
+      } else {
+        emptyState.classList.add("hidden");
+      }
+    }
+
+    // -----------------------
+    // BUSCADOR
+    // -----------------------
+    searchInput.addEventListener("input", () => {
+      const texto = searchInput.value.toLowerCase().trim();
+      
+      if (texto === "") {
+        mostrarLibros(allLibros, allStock);
+        return;
+      }
+
+      const filtrados = allLibros.filter(l =>
+        l.nombre.toLowerCase().includes(texto) ||
+        l.nivel.toLowerCase().includes(texto) ||
+        l.editorial.toLowerCase().includes(texto) ||
+        l.edicion.toLowerCase().includes(texto)
+      );
+
+      mostrarLibros(filtrados, allStock);
+      updateEmptyState(filtrados.length === 0);
+    });
+
+    // -----------------------
+    // EDITAR LIBRO
+    // -----------------------
+    async function editarLibro(id) {
+      try {
+        editId = id;
+        modalTitle.textContent = "Editar Libro";
+
+        const res = await fetch(`${API_URL}/${id}`, {
+          headers: authHeaders()
+        });
+
+        if (!res.ok) throw new Error('Error cargando libro');
+
+        const l = await res.json();
+
+        nombre.value = l.nombre || "";
+        nivel.value = l.nivel || "";
+        tipo.value = l.tipo || "";
+        editorial.value = l.editorial || "";
+        edicion.value = l.edicion || "";
+        
+        // Limpiar campos de ingreso
+        unidades.value = "";
+        valorCompra.value = "";
+        valorVentaPublico.value = "";
+
+        modal.classList.remove("hidden");
+        nombre.focus();
+
+      } catch (error) {
+        console.error("Error editando libro:", error);
+        showError("Error al cargar el libro para editar.");
+      }
+    }
+
+    // -----------------------
+    // GUARDAR LIBRO
+    // -----------------------
+    libroForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      showLoading(true);
+
+      const body = {
+        nombre: nombre.value.trim(),
+        nivel: nivel.value.trim(),
+        tipo: Number(tipo.value),
+        editorial: editorial.value.trim(),
+        edicion: edicion.value.trim()
+      };
+
+      const url = editId ? `${API_URL}/${editId}` : API_URL;
+      const method = editId ? "PUT" : "POST";
+
+      try {
+        // Guardar libro
+        const res = await fetch(url, {
+          method,
+          headers: authHeaders({
+            "Content-Type": "application/json"
+          }),
+          body: JSON.stringify(body)
+        });
+
+        if (!res.ok) {
+          const errorText = await res.text();
+          throw new Error(errorText || 'Error guardando libro');
+        }
+
+        const libro = await res.json();
+        let libroId = libro.id;
+
+        // Si no viene ID, buscar por nombre
+        if (!libroId) {
+          const searchRes = await fetch(`${API_URL}?nombre=${encodeURIComponent(body.nombre)}`, {
+            headers: authHeaders()
+          });
+          
+          if (searchRes.ok) {
+            const librosList = await searchRes.json();
+            const encontrado = librosList.find(l => l.nombre === body.nombre);
+            if (encontrado) libroId = encontrado.id;
+          }
+        }
+
+        // Registrar ingreso si hay unidades
+        if (unidades.value && Number(unidades.value) > 0 && libroId) {
+          const ingresoBody = {
+            libroId: libroId,
+            unidades: Number(unidades.value),
+            valorCompra: Number(valorCompra.value) || 0,
+            valorVentaPublico: Number(valorVentaPublico.value) || 0
+          };
+
+          const ingresoRes = await fetch(API_INGRESOS, {
+            method: "POST",
+            headers: authHeaders({
+              "Content-Type": "application/json"
+            }),
+            body: JSON.stringify(ingresoBody)
+          });
+
+          if (!ingresoRes.ok) {
+            console.warn("Advertencia: Ingreso no registrado, pero libro fue guardado");
+          }
+        }
+
+        showSuccess(editId ? "Libro actualizado correctamente" : "Libro creado exitosamente");
+        closeModal();
+        cargarLibros();
+
+      } catch (error) {
+        console.error("Error guardando libro:", error);
+        showError(error.message || "Error conectando con el servidor");
+      } finally {
+        showLoading(false);
+      }
+    });
+
+    // -----------------------
+    // INICIALIZAR
+    // -----------------------
+    document.addEventListener('DOMContentLoaded', () => {
+      cargarLibros();
+      
+      // Verificar conexión
+      if (!navigator.onLine) {
+        console.warn("Aplicación en modo offline");
+      }
+    });
+
+  </script>
+
+</body>
+</html>

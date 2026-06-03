@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Inventario – SmartBook</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Colores personalizados -->
+  <script src="js/tailwind.config.js"></script>
+
+  <style>
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .card-shadow { box-shadow: 0 10px 30px -5px rgba(0,0,0,0.1); animation: fadeInUp 0.6s ease-out; }
+    .logo-animate { animation: fadeIn 0.8s ease-out; }
+    .input-focus { transition: all .3s ease; }
+    
+    .input-focus:focus {
+      border-color: #e12d2e;
+      box-shadow: 0 0 0 3px rgba(225,45,46,0.1);
+      transform: translateY(-2px);
+    }
+
+    .sidebar-link { transition: all .2s ease; }
+    .sidebar-link:hover { transform: translateX(5px); }
+
+    .btn-primary { transition: all .3s ease; }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 15px -3px rgba(225,45,46,0.3); }
+
+    .stock-badge { padding: .25rem .75rem; border-radius: 9999px; font-size: .75rem; font-weight: 600; }
+
+    .stock-low { background: #fef2f2; color: #dc2626; border:1px solid #fecaca; }
+    .stock-medium { background: #fffbeb; color:#d97706; border:1px solid #fed7aa; }
+    .stock-high { background: #f0fdf4; color:#16a34a; border:1px solid #bbf7d0; }
+
+    .search-card { transition: all .3s ease; }
+    .search-card:hover { transform: translateY(-2px); box-shadow: 0 8px 25px -5px rgba(0,0,0,0.1); }
+  </style>
+</head>
+
+<body class="bg-gray-50 min-h-screen">
+
+  <!-- Protección con EXPIRACIÓN -->
+  <script>
+    const auth =
+      JSON.parse(localStorage.getItem("smartbook_auth")) ||
+      JSON.parse(sessionStorage.getItem("smartbook_auth"));
+
+    if (!auth || !auth.token) {
+      window.location.href = "index.html";
+    } else {
+      const ahora = Date.now();
+      const expira = Number(auth.expiracion || 0);
+
+      if (ahora >= expira) {
+        localStorage.removeItem("smartbook_auth");
+        sessionStorage.removeItem("smartbook_auth");
+        alert("Tu sesión ha expirado. Por favor inicia sesión nuevamente.");
+        window.location.href = "index.html";
+      }
+    }
+  </script>
+
+  <div class="flex">
+
+    <!-- SIDEBAR -->
+    <aside class="w-64 bg-white h-screen fixed top-0 left-0 shadow-lg flex flex-col z-10">
+
+      <div class="p-6 flex flex-col items-center border-b">
+        <img src="images/logocecar.png" alt="SmartBook Logo" class="h-12 w-auto mb-4 logo-animate">
+        <h1 class="text-xl font-bold text-gray-700">SmartBook</h1>
+      </div>
+
+      <nav class="p-4 flex-1 space-y-2 text-gray-700">
+
+        <a class="sidebar-link block px-4 py-3 rounded-lg hover:bg-primary/10" href="dashboard.html">
+          <span class="flex items-center gap-3">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="7" height="7"></rect>
+              <rect x="14" y="3" width="7" height="7"></rect>
+              <rect x="14" y="14" width="7" height="7"></rect>
+              <rect x="3" y="14" width="7" height="7"></rect>
+            </svg>
+            Dashboard
+          </span>
+        </a>
+
+        <a class="sidebar-link block px-4 py-3 rounded-lg hover:bg-primary/10" href="clientes.html">
+          <span class="flex items-center gap-3">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            Clientes
+          </span>
+        </a>
+
+        <a class="sidebar-link block px-4 py-3 rounded-lg hover:bg-primary/10" href="libros.html">
+          <span class="flex items-center gap-3">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+            </svg>
+            Libros
+          </span>
+        </a>
+
+        <a class="sidebar-link block px-4 py-3 rounded-lg bg-primary text-white font-medium" href="inventario.html">
+          <span class="flex items-center gap-3">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5 12 2"></polygon>
+              <line x1="12" y1="22" x2="12" y2="15.5"></line>
+              <polyline points="22 8.5 12 15.5 2 8.5"></polyline>
+              <polyline points="2 15.5 12 8.5 22 15.5"></polyline>
+              <line x1="12" y1="2" x2="12" y2="8.5"></line>
+            </svg>
+            Inventario
+          </span>
+        </a>
+
+        <a class="sidebar-link block px-4 py-3 rounded-lg hover:bg-primary/10" href="ventas.html">
+          <span class="flex items-center gap-3">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <path d="M16 10a4 4 0 0 1-8 0"></path>
+            </svg>
+            Ventas
+          </span>
+        </a>
+
+      </nav>
+
+      <div class="p-4 border-t">
+        <button id="logout" class="w-full py-3 bg-primary text-white rounded-lg hover:bg-red-700 flex items-center justify-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16,17 21,12 16,7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+          </svg>
+          Cerrar sesión
+        </button>
+      </div>
+
+    </aside>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="ml-64 p-8 w-full">
+
+      <header class="flex justify-between items-center mb-8">
+        <div>
+          <h2 class="text-3xl font-bold text-gray-700">Gestión de Inventario</h2>
+          <p class="text-gray-500 text-sm">Control y seguimiento del stock de libros</p>
+        </div>
+        
+        <button onclick="cargarInventario()" 
+                class="btn-primary px-4 py-2 bg-secondary text-white rounded-lg hover:bg-blue-800 shadow flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12a9 9 0 0 1-9 9m9-9a9 9 0 0 0-9-9m9 9H3m9 9v-9m0-9v9"></path>
+          </svg>
+          Ver Todo
+        </button>
+      </header>
+
+      <!-- BUSCADORES -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+
+        <!-- Buscar ID -->
+        <div class="search-card bg-white p-6 rounded-xl card-shadow">
+
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+            </div>
+            <h3 class="font-semibold text-gray-700">Buscar por ID de Lote</h3>
+          </div>
+
+          <div class="flex">
+            <input id="searchId" class="input-focus flex-1 p-3 border border-gray-300 rounded-l-lg" placeholder="Ej: 1" />
+            <button onclick="buscarPorId()" class="btn-primary px-4 bg-primary text-white rounded-r-lg hover:bg-red-700">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+            </button>
+          </div>
+
+        </div>
+
+        <!-- Buscar Código -->
+        <div class="search-card bg-white p-6 rounded-xl card-shadow">
+
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 bg-secondary/10 rounded-lg flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+              </svg>
+            </div>
+            <h3 class="font-semibold text-gray-700">Buscar por Código</h3>
+          </div>
+
+          <div class="flex">
+            <input id="searchCodigo" class="input-focus flex-1 p-3 border border-gray-300 rounded-l-lg" placeholder="Ej: 2025-S2-1" />
+            <button onclick="buscarPorCodigo()" class="btn-primary px-4 bg-secondary text-white rounded-r-lg hover:bg-blue-800">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+            </button>
+          </div>
+
+        </div>
+
+        <!-- Buscar Semestre -->
+        <div class="search-card bg-white p-6 rounded-xl card-shadow">
+
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+              </svg>
+            </div>
+            <h3 class="font-semibold text-gray-700">Buscar por Semestre</h3>
+          </div>
+
+          <div class="flex">
+            <input id="searchSemestre" class="input-focus flex-1 p-3 border border-gray-300 rounded-l-lg" placeholder="Ej: 2025-S2" />
+            <button onclick="buscarPorSemestre()" class="btn-primary px-4 bg-primary text-white rounded-r-lg hover:bg-red-700">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+            </button>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- TABLA INV -->
+      <div class="bg-white card-shadow rounded-xl overflow-hidden">
+
+        <div class="overflow-x-auto">
+
+          <table class="w-full text-left">
+            <thead class="bg-secondary text-white">
+              <tr>
+                <th class="p-4 font-semibold">Código</th>
+                <th class="p-4 font-semibold">Libro</th>
+                <th class="p-4 font-semibold">Nivel</th>
+                <th class="p-4 font-semibold">Tipo</th>
+                <th class="p-4 font-semibold">Disponible</th>
+                <th class="p-4 font-semibold">Acciones</th>
+              </tr>
+            </thead>
+
+            <tbody id="inventarioTable" class="divide-y">
+
+              <tr>
+                <td colspan="6" class="p-8 text-center text-gray-500">
+                  <div class="flex justify-center">
+                    <div class="h-8 w-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+                  </div>
+                  <p class="mt-2">Cargando inventario...</p>
+                </td>
+              </tr>
+
+            </tbody>
+          </table>
+
+        </div>
+
+      </div>
+
+    </main>
+
+  </div>
+
+  <!-- MODAL DETALLE -->
+  <div id="modal"
+    class="hidden fixed inset-0 bg-black/50 flex justify-center items-center z-50 backdrop-blur-sm p-4"
+    style="animation: fadeIn 0.3s ease-out;">
+
+    <div class="bg-white w-full max-w-xl rounded-xl shadow-xl overflow-hidden"
+         style="animation: slideDown 0.3s ease-out;">
+
+      <div class="bg-primary text-white p-6">
+        <h3 class="text-xl font-bold">Detalle de Inventario</h3>
+      </div>
+
+      <div id="modalContent" class="p-6 space-y-4 text-gray-700"></div>
+
+      <div class="flex justify-end p-6 border-t">
+        <button onclick="modal.classList.add('hidden')" 
+                class="px-5 py-2.5 bg-primary text-white rounded-lg hover:bg-red-700">
+          Cerrar
+        </button>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- SCRIPT PRINCIPAL ORIGINAL -->
+  <script>
+    const API_STOCK = "https://smartbook.runasp.net/api/Libros/stock";
+    const API_INV = "https://smartbook.runasp.net/api/Inventarios";
+    const token = auth.token;
+
+    const inventarioTable = document.getElementById("inventarioTable");
+    const modal = document.getElementById("modal");
+    const modalContent = document.getElementById("modalContent");
+
+    function filaHtml(item) {
+      let stockClass = "stock-high";
+      if (item.disponible === 0) stockClass = "stock-low";
+      else if (item.disponible < 10) stockClass = "stock-medium";
+
+      return `
+      <tr class="hover:bg-gray-50 transition-colors">
+        <td class="p-4 font-mono text-sm font-medium text-gray-900">${item.codigo}</td>
+        <td class="p-4"><div class="font-medium text-gray-900">${item.libro}</div></td>
+        <td class="p-4"><span class="bg-primary/10 text-primary px-2 py-1 rounded-full text-xs font-medium">${item.nivel}</span></td>
+        <td class="p-4"><span>${item.tipo}</span></td>
+        <td class="p-4"><span class="stock-badge ${stockClass}">${item.disponible} unidades</span></td>
+        <td class="p-4">
+          <button class="text-primary font-semibold hover:text-red-700"
+            onclick='verDetalle(${JSON.stringify(item).replace(/'/g, "&#39;")})'>
+            Ver Detalle
+          </button>
+        </td>
+      </tr>`;
+    }
+
+    function verDetalle(item) {
+      let stockClass = "stock-high";
+      if (item.disponible === 0) stockClass = "stock-low";
+      else if (item.disponible < 10) stockClass = "stock-medium";
+
+      modalContent.innerHTML = `
+        <div class="grid grid-cols-2 gap-4">
+          <div><p class="text-sm text-gray-600">Libro:</p><p class="font-semibold">${item.libro}</p></div>
+          <div><p class="text-sm text-gray-600">Nivel:</p><p>${item.nivel}</p></div>
+          <div><p class="text-sm text-gray-600">Tipo:</p><p>${item.tipo}</p></div>
+          <div><p class="text-sm text-gray-600">Código:</p><p class="font-mono">${item.codigo}</p></div>
+          <div class="col-span-2"><p class="text-sm text-gray-600">Stock:</p><p><span class="stock-badge ${stockClass}">${item.disponible} unidades</span></p></div>
+        </div>`;
+      
+      modal.classList.remove("hidden");
+    }
+
+    async function cargarInventario() {
+      try {
+        inventarioTable.innerHTML = `
+          <tr>
+            <td colspan="6" class="p-8 text-center text-gray-500">
+              <div class="flex justify-center"><div class="h-8 w-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div></div>
+              <p class="mt-2">Cargando inventario...</p>
+            </td>
+          </tr>`;
+
+        const res = await fetch(API_STOCK, {
+          headers: { "Authorization": `Bearer ${token}` }
+        });
+
+        if (!res.ok) throw new Error();
+
+        const data = await res.json();
+
+        if (data.length === 0) {
+          inventarioTable.innerHTML = `
+            <tr>
+              <td colspan="6" class="p-8 text-center text-gray-500">No hay registros</td>
+            </tr>`;
+          return;
+        }
+
+        inventarioTable.innerHTML = "";
+        data.forEach(s => {
+          inventarioTable.innerHTML += filaHtml({
+            codigo: "—",
+            libro: s.libro,
+            nivel: s.nivel,
+            tipo: s.tipo,
+            disponible: s.stockTotal
+          });
+        });
+
+      } catch {
+        inventarioTable.innerHTML = `
+          <tr>
+            <td colspan="6" class="p-8 text-center text-red-500">Error al cargar</td>
+          </tr>`;
+      }
+    }
+
+    async function buscarPorId() {
+      const id = document.getElementById("searchId").value.trim();
+      if (!id) return cargarInventario();
+
+      try {
+        const res = await fetch(`${API_INV}/${id}`, {
+          headers: { "Authorization": `Bearer ${token}` }
+        });
+
+        if (!res.ok) return alert("ID no encontrado");
+
+        const inv = await res.json();
+
+        inventarioTable.innerHTML = filaHtml({
+          codigo: inv.loteCodigo,
+          libro: inv.nombreLibro,
+          nivel: inv.nivel,
+          tipo: "Físico",
+          disponible: inv.cantidadFisico
+        });
+
+      } catch {
+        alert("Error al buscar");
+      }
+    }
+
+    async function buscarPorCodigo() {
+      const code = document.getElementById("searchCodigo").value.trim();
+      if (!code) return cargarInventario();
+
+      try {
+        const res = await fetch(`${API_INV}/codigo/${code}`, {
+          headers: { "Authorization": `Bearer ${token}` }
+        });
+
+        if (!res.ok) return alert("Código no encontrado");
+
+        const inv = await res.json();
+
+        inventarioTable.innerHTML = filaHtml({
+          codigo: inv.loteCodigo,
+          libro: inv.nombreLibro,
+          nivel: inv.nivel,
+          tipo: "Físico",
+          disponible: inv.cantidadFisico
+        });
+
+      } catch {
+        alert("Error al buscar");
+      }
+    }
+
+    async function buscarPorSemestre() {
+      const sem = document.getElementById("searchSemestre").value.trim();
+      if (!sem) return cargarInventario();
+
+      try {
+        const res = await fetch(`${API_INV}/semestre/${sem}`, {
+          headers: { "Authorization": `Bearer ${token}` }
+        });
+
+        if (!res.ok) return alert("Semestre no encontrado");
+
+        const data = await res.json();
+
+        inventarioTable.innerHTML = "";
+
+        if (data.length === 0) {
+          inventarioTable.innerHTML = `
+            <tr>
+              <td colspan="6" class="p-8 text-center text-gray-500">
+                No se encontraron registros para "${sem}"
+              </td>
+            </tr>`;
+          return;
+        }
+
+        data.forEach(inv => {
+          inventarioTable.innerHTML += filaHtml({
+            codigo: inv.loteCodigo,
+            libro: inv.nombreLibro,
+            nivel: inv.nivel,
+            tipo: "Físico",
+            disponible: inv.cantidadFisico
+          });
+        });
+
+      } catch {
+        alert("Error al buscar");
+      }
+    }
+
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) modal.classList.add("hidden");
+    });
+
+    document.getElementById("logout").onclick = () => {
+      localStorage.removeItem("smartbook_auth");
+      sessionStorage.removeItem("smartbook_auth");
+      window.location.href = "index.html";
+    };
+
+    cargarInventario();
+  </script>
+
+  <script src="auth.js"></script>
+
+</body>
+</html>

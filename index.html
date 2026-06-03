@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>SmartBook – Iniciar sesión</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Colores personalizados -->
+  <script src="js/tailwind.config.js"></script>
+
+  <style>
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+    
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    body {
+      background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), 
+                  url('images/bg_bienestar.webp') no-repeat center center fixed;
+      background-size: cover;
+    }
+    
+    .card-shadow {
+      box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.25);
+      animation: fadeInUp 0.6s ease-out;
+    }
+    
+    .logo-animate {
+      animation: fadeIn 0.8s ease-out;
+    }
+    
+    .form-animate {
+      animation: fadeIn 1s ease-out 0.2s both;
+    }
+    
+    .input-focus {
+      transition: all 0.3s ease;
+    }
+    
+    .input-focus:focus {
+      border-color: #e12d2e;
+      box-shadow: 0 0 0 3px rgba(225, 45, 46, 0.1);
+      transform: translateY(-2px);
+    }
+    
+    .input-icon {
+      color: #9ca3af;
+    }
+    
+    .footer-animate {
+      animation: fadeIn 1.2s ease-out 0.4s both;
+    }
+  </style>
+</head>
+
+<body class="min-h-screen flex flex-col">
+
+  <div class="flex-1 flex items-center justify-center p-4">
+    <div class="w-full max-w-md">
+      <!-- CARD -->
+      <div class="bg-white/95 backdrop-blur-sm card-shadow rounded-2xl p-8">
+
+        <!-- LOGO -->
+        <div class="flex flex-col items-center mb-8 logo-animate">
+          <img src="images/logocecar.png" alt="SmartBook Logo" class="h-20 w-auto mb-4">
+        </div>
+
+        <!-- ERROR -->
+        <div id="errorBox"
+          class="hidden mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+          style="animation: slideDown 0.3s ease-out;">
+          <div class="flex items-start gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0 mt-0.5">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="12" y1="8" x2="12" y2="12"/>
+              <line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+            <span id="errorMessage">Error al iniciar sesión.</span>
+          </div>
+        </div>
+
+        <!-- FORM -->
+        <form id="loginForm" class="space-y-5 form-animate">
+          <!-- Email -->
+          <div>
+            <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
+              Correo electrónico
+            </label>
+            <div class="input-wrapper relative">
+              <div class="input-icon absolute left-3 top-1/2 -translate-y-1/2 z-10">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect width="20" height="16" x="2" y="4" rx="2"/>
+                  <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+                </svg>
+              </div>
+              <input id="email" type="email" required autocomplete="email"
+                class="input-focus w-full pl-11 pr-4 py-3 text-sm border border-gray-300 rounded-lg
+                       focus:outline-none transition-all relative z-0"
+                placeholder="admin@cecar.edu.co" />
+            </div>
+          </div>
+
+          <!-- Password -->
+          <div>
+            <label for="password" class="block text-sm font-medium text-gray-700 mb-2">
+              Contraseña
+            </label>
+            <div class="input-wrapper relative">
+              <div class="input-icon absolute left-3 top-1/2 -translate-y-1/2 z-10">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                </svg>
+              </div>
+              <input id="password" type="password" required autocomplete="current-password"
+                class="input-focus w-full pl-11 pr-11 py-3 text-sm border border-gray-300 rounded-lg
+                       focus:outline-none transition-all relative z-0"
+                placeholder="••••••••" />
+              <button type="button" id="togglePassword" 
+                class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors z-10">
+                <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
+                  <circle cx="12" cy="12" r="3"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Remember & Forgot -->
+          <div class="flex items-center justify-between text-sm">
+            <label class="flex items-center gap-2 text-gray-600 cursor-pointer">
+              <input id="rememberMe" type="checkbox"
+                class="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary" />
+              <span>Recordarme</span>
+            </label>
+            
+            <a href="restablecer.html" class="text-primary hover:text-red-600 transition-colors font-medium">
+              ¿Olvidaste tu contraseña?
+            </a>
+          </div>
+
+          <!-- Submit Button -->
+          <button type="submit" id="submitBtn"
+            class="w-full flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-3
+                   text-white text-sm font-semibold shadow-md hover:bg-red-600 hover:shadow-lg hover:-translate-y-0.5
+                   focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary 
+                   transition-all duration-200 active:scale-95">
+            <span id="btnText">Ingresar</span>
+            <span id="btnSpinner"
+              class="hidden h-4 w-4 border-2 border-white/60 border-t-transparent rounded-full animate-spin"></span>
+          </button>
+        </form>
+      </div>
+
+      <!-- Footer -->
+      <footer class="w-full text-center py-4 footer-animate">
+        <p class="text-sm text-white/90">
+          © <span id="year"></span> SmartBook · CDI CECAR
+        </p>
+      </footer>
+    </div>
+  </div>
+
+  <!-- SCRIPT -->
+  <script>
+    const API_BASE_URL = "https://smartbook.runasp.net";
+    const TOKEN_DURATION_MS = 60 * 60 * 1000; // 1 hora en milisegundos
+
+    const loginForm = document.getElementById("loginForm");
+    const errorBox = document.getElementById("errorBox");
+    const errorMsg = document.getElementById("errorMessage");
+    const submitBtn = document.getElementById("submitBtn");
+    const btnText = document.getElementById("btnText");
+    const btnSpinner = document.getElementById("btnSpinner");
+    const togglePassword = document.getElementById("togglePassword");
+    const passwordInput = document.getElementById("password");
+    const eyeIcon = document.getElementById("eyeIcon");
+
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    // Toggle password visibility
+    togglePassword.addEventListener("click", () => {
+      const type = passwordInput.type === "password" ? "text" : "password";
+      passwordInput.type = type;
+      
+      if (type === "text") {
+        eyeIcon.innerHTML = '<path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/>';
+      } else {
+        eyeIcon.innerHTML = '<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>';
+      }
+    });
+
+    function setLoading(state) {
+      if (state) {
+        submitBtn.disabled = true;
+        submitBtn.classList.add("opacity-70", "cursor-not-allowed");
+        btnText.textContent = "Ingresando...";
+        btnSpinner.classList.remove("hidden");
+      } else {
+        submitBtn.disabled = false;
+        submitBtn.classList.remove("opacity-70", "cursor-not-allowed");
+        btnText.textContent = "Ingresar";
+        btnSpinner.classList.add("hidden");
+      }
+    }
+
+    function showError(msg) {
+      errorMsg.textContent = msg;
+      errorBox.classList.remove("hidden");
+    }
+
+    function hideError() {
+      errorBox.classList.add("hidden");
+    }
+
+    loginForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      hideError();
+      setLoading(true);
+
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+      const rememberMe = document.getElementById("rememberMe").checked;
+
+      try {
+        const resp = await fetch(`${API_BASE_URL}/api/Seguridad/iniciar-sesion`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "*/*"
+          },
+          body: JSON.stringify({ email, password })
+        });
+
+        if (!resp.ok) {
+          const err = await resp.json().catch(() => null);
+          showError(err?.mensaje || "Credenciales incorrectas.");
+          setLoading(false);
+          return;
+        }
+
+        const data = await resp.json();
+
+        // ⏰ Calculamos la hora de expiración: ahora + 1 hora
+        const expiracion = Date.now() + TOKEN_DURATION_MS;
+
+        const authData = {
+          token: data.token,
+          usuario: data.usuario,
+          expiracion: expiracion
+        };
+
+        // Limpiamos datos previos por seguridad
+        localStorage.removeItem("smartbook_auth");
+        sessionStorage.removeItem("smartbook_auth");
+
+        if (rememberMe) {
+          // Guarda en localStorage (persiste aunque cierre el navegador)
+          localStorage.setItem("smartbook_auth", JSON.stringify(authData));
+        } else {
+          // Guarda solo en la sesión actual del navegador
+          sessionStorage.setItem("smartbook_auth", JSON.stringify(authData));
+        }
+
+        window.location.href = "dashboard.html";
+
+      } catch (err) {
+        console.error(err);
+        showError("Error de conexión con el servidor.");
+      }
+
+      setLoading(false);
+    });
+
+  </script>
+
+
+</body>
+</html>
